@@ -7,6 +7,8 @@ import com.example.Material.Persistence.Models.TopicDAO;
 import com.example.Material.Persistence.Repository.CourseRepository;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,9 @@ public class CourseServiceImpl implements CourseService
     @Autowired
     private Jedis jedis;
 
+    private static Logger logger = LogManager.getLogger(CourseServiceImpl.class);
+
+
     @Override
     @Async
     public CompletableFuture<CourseResponse> addCourse(String topicId, CourseRequest courseRequest)
@@ -39,7 +44,8 @@ public class CourseServiceImpl implements CourseService
         courseDAO.setDescription(courseRequest.getDescription());
         TopicDAO topicDAO = new TopicDAO(topicId, "");
         courseDAO.setTopicDAO(topicDAO);
-        courseRepository.saveAndFlush(courseDAO);
+        courseRepository.save(courseDAO);
+        logger.info("Saving the course : {}", courseDAO);
         return CompletableFuture.completedFuture(courseResponse);
 
     }
@@ -52,25 +58,29 @@ public class CourseServiceImpl implements CourseService
         Gson gson = new Gson();
         if (!jedis.exists(topicId+"courses"))
         {
+            logger.info("No course present in Redis for topicId : {}", topicId);
             List<CourseDAO> courseDAOS;
             courseDAOS = courseRepository.findByTopicDAOTopicId(topicId);
-            System.out.println(courseDAOS);
-            for (CourseDAO courseDAO : courseDAOS) {
-                CourseResponse courseResponse = new CourseResponse();
-                courseResponse.setCourseId(courseDAO.getCourseId());
-                courseResponse.setName(courseDAO.getName());
-                courseResponse.setDescription(courseDAO.getDescription());
-                courseResponses.add(courseResponse);
+            logger.info("Fetched course from Db : {}", courseDAOS);
+            if (courseDAOS != null) {
+                for (CourseDAO courseDAO : courseDAOS) {
+                    CourseResponse courseResponse = new CourseResponse();
+                    courseResponse.setCourseId(courseDAO.getCourseId());
+                    courseResponse.setName(courseDAO.getName());
+                    courseResponse.setDescription(courseDAO.getDescription());
+                    courseResponses.add(courseResponse);
+                }
+                String serializedCourse = gson.toJson(courseResponses);
+                jedis.set(topicId + "courses", serializedCourse);
+                jedis.expire(topicId + "courses", 3000);
             }
-            String serializedCourse = gson.toJson(courseResponses);
-            jedis.set(topicId + "courses", serializedCourse);
-            jedis.expire(topicId + "courses", 3000);
         }
         else
         {
             String deserializedCourse = jedis.get(topicId + "courses");
             Type listType = new TypeToken<List<CourseResponse>>(){}.getType();
             courseResponses = gson.fromJson(deserializedCourse, listType);
+            logger.info("Found Courses in Redis : {}", courseResponses);
         }
      return CompletableFuture.completedFuture(courseResponses);
     }

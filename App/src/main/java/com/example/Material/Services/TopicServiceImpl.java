@@ -6,6 +6,8 @@ import com.example.Material.MaterialResponses.TopicResponse;
 import com.example.Material.Persistence.Models.TopicDAO;
 import com.example.Material.Persistence.Repository.TopicRepository;
 import com.google.gson.Gson;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,8 @@ public class TopicServiceImpl implements TopicService
     @Autowired
     private Jedis jedis;
 
+    private static Logger logger = LogManager.getLogger(TopicServiceImpl.class);
+
     @Override
     @Async
     public CompletableFuture<TopicResponse> addTopic(TopicRequest topicRequest) throws ExecutionException, InterruptedException {
@@ -38,7 +42,8 @@ public class TopicServiceImpl implements TopicService
         TopicDAO topicDAO = new TopicDAO();
         topicDAO.setTopicId(topicRequest.getTopicId());
         topicDAO.setName(topicRequest.getName());
-        topicRepository.saveAndFlush(topicDAO);
+        logger.info("Saving the Topic : {}",topicResponse);
+        topicRepository.save(topicDAO);
         return CompletableFuture.completedFuture(topicResponse);
     }
 
@@ -50,19 +55,23 @@ public class TopicServiceImpl implements TopicService
         Gson gson = new Gson();
         if (!jedis.exists(topicId))
         {
+            logger.info("No topic present in Redis for topicId : {}", topicId);
             TopicDAO topicDAO = topicRepository.findById(topicId).orElse(null);
             topicResponse.setTopicId(topicDAO.getTopicId());
             topicResponse.setName(topicDAO.getName());
             CompletableFuture<List<CourseResponse>> courseResponses = courseService.getCourse(topicId);
             topicResponse.setCourseResponses(courseResponses.get());
+            logger.info("Fetched topic from Db : {}", topicResponse);
             String deserializedTopic = gson.toJson(topicResponse);
             jedis.set(topicId, deserializedTopic);
             jedis.expire(topicId, 3000);
         }
         else
         {
+
             String deserializedTopic = jedis.get(topicId);
             topicResponse = gson.fromJson(deserializedTopic, TopicResponse.class);
+            logger.info("Found Topic in Redis : {}", topicResponse);
         }
         return CompletableFuture.completedFuture(topicResponse);
     }

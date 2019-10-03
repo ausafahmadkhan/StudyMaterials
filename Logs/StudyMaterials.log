@@ -1,0 +1,25 @@
+[INFO ] 2019-10-03 23:40:44.819 [main] StudyMaterialsApp - Started StudyMaterials App
+[INFO ] 2019-10-03 23:42:53.942 [task-2] TopicServiceImpl - No topic present in Redis for topicId : 1
+[INFO ] 2019-10-03 23:42:54.329 [task-3] CourseServiceImpl - No course present in Redis for topicId : 1
+[INFO ] 2019-10-03 23:42:54.362 [task-3] CourseServiceImpl - Fetched course from Db : []
+[INFO ] 2019-10-03 23:42:54.371 [task-2] TopicServiceImpl - Fetched topic from Db : TopicResponse(topicId=1, name=Java, courseResponses=[])
+[INFO ] 2019-10-03 23:43:26.646 [task-4] TopicServiceImpl - No topic present in Redis for topicId : 2
+[INFO ] 2019-10-03 23:43:26.651 [task-5] CourseServiceImpl - No course present in Redis for topicId : 2
+[INFO ] 2019-10-03 23:43:26.655 [task-5] CourseServiceImpl - Fetched course from Db : []
+[INFO ] 2019-10-03 23:43:26.662 [task-4] TopicServiceImpl - Fetched topic from Db : TopicResponse(topicId=2, name=Node.js, courseResponses=[])
+[INFO ] 2019-10-03 23:43:34.776 [task-6] TopicServiceImpl - Found Topic in Redis : TopicResponse(topicId=2, name=Node.js, courseResponses=[])
+[INFO ] 2019-10-03 23:45:46.052 [task-7] CourseServiceImpl - Saving the course : CourseDAO(courseId=1, name=Course1, description=desc1, topicDAO=TopicDAO(topicId=1, name=))
+[INFO ] 2019-10-03 23:46:18.212 [task-8] CourseServiceImpl - Saving the course : CourseDAO(courseId=2, name=Course2, description=desc2, topicDAO=TopicDAO(topicId=2, name=))
+[INFO ] 2019-10-03 23:46:50.056 [task-9] TopicServiceImpl - Found Topic in Redis : TopicResponse(topicId=2, name=Node.js, courseResponses=[])
+[INFO ] 2019-10-03 23:48:50.052 [task-10] TopicServiceImpl - No topic present in Redis for topicId : 2
+[INFO ] 2019-10-03 23:48:50.065 [task-11] CourseServiceImpl - Found Courses in Redis : []
+[INFO ] 2019-10-03 23:48:50.066 [task-10] TopicServiceImpl - Fetched topic from Db : TopicResponse(topicId=2, name=Node.js, courseResponses=[])
+[INFO ] 2019-10-03 23:48:52.328 [task-12] TopicServiceImpl - Found Topic in Redis : TopicResponse(topicId=2, name=Node.js, courseResponses=[])
+[INFO ] 2019-10-03 23:52:53.522 [task-13] TopicServiceImpl - No topic present in Redis for topicId : 1
+[INFO ] 2019-10-03 23:52:53.531 [task-14] CourseServiceImpl - No course present in Redis for topicId : 1
+[INFO ] 2019-10-03 23:52:53.541 [task-14] CourseServiceImpl - Fetched course from Db : [CourseDAO(courseId=1, name=Course1, description=desc1, topicDAO=TopicDAO(topicId=1, name=Java))]
+[INFO ] 2019-10-03 23:52:53.545 [task-13] TopicServiceImpl - Fetched topic from Db : TopicResponse(topicId=1, name=Java, courseResponses=[CourseResponse(courseId=1, name=Course1, description=desc1)])
+[INFO ] 2019-10-03 23:53:15.410 [task-15] TopicServiceImpl - No topic present in Redis for topicId : 2
+[INFO ] 2019-10-03 23:53:15.416 [task-16] CourseServiceImpl - No course present in Redis for topicId : 2
+[INFO ] 2019-10-03 23:53:15.425 [task-16] CourseServiceImpl - Fetched course from Db : [CourseDAO(courseId=2, name=Course2, description=desc2, topicDAO=TopicDAO(topicId=2, name=Node.js))]
+[INFO ] 2019-10-03 23:53:15.428 [task-15] TopicServiceImpl - Fetched topic from Db : TopicResponse(topicId=2, name=Node.js, courseResponses=[CourseResponse(courseId=2, name=Course2, description=desc2)])
