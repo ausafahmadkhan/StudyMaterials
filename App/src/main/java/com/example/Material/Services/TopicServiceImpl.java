@@ -63,8 +63,7 @@ public class TopicServiceImpl implements TopicService
             topicResponse.setCourseResponses(courseResponses.get());
             logger.info("Fetched topic from Db : {}", topicResponse);
             String deserializedTopic = gson.toJson(topicResponse);
-            jedis.set(topicId, deserializedTopic);
-            jedis.expire(topicId, 3000);
+            jedis.setex(topicId, 3000, deserializedTopic);
         }
         else
         {
