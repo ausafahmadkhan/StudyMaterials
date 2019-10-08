@@ -56,7 +56,7 @@ public class CourseServiceImpl implements CourseService
     {
         List<CourseResponse> courseResponses = new ArrayList<>();
         Gson gson = new Gson();
-        if (!jedis.exists(topicId+"courses"))
+        if (!jedis.exists("courses_"+topicId))
         {
             logger.info("No course present in Redis for topicId : {}", topicId);
             List<CourseDAO> courseDAOS;
@@ -71,13 +71,12 @@ public class CourseServiceImpl implements CourseService
                     courseResponses.add(courseResponse);
                 }
                 String serializedCourse = gson.toJson(courseResponses);
-                jedis.set(topicId + "courses", serializedCourse);
-                jedis.expire(topicId + "courses", 3000);
+                jedis.setex(topicId + "courses",3000, serializedCourse);
             }
         }
         else
         {
-            String deserializedCourse = jedis.get(topicId + "courses");
+            String deserializedCourse = jedis.get("courses_" + topicId);
             Type listType = new TypeToken<List<CourseResponse>>(){}.getType();
             courseResponses = gson.fromJson(deserializedCourse, listType);
             logger.info("Found Courses in Redis : {}", courseResponses);
